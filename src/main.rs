@@ -1,3 +1,11 @@
+//! Snake game
+//!
+//! Example of 2d graphics in Rust.
+//!
+//! Based on https://gist.github.com/AndrewJakubowicz/9972b5d46be474c186a2dc3a71326de4
+//!
+//! Author: @pejdavies1606
+
 extern crate pancurses;
 extern crate rand;
 
