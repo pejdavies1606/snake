@@ -147,7 +147,7 @@ impl Snake {
         self.parts.push_front(new_head);
         if self.just_eaten {
             self.score += 1;
-            self.speed -= self.speed / 10;
+            self.speed -= self.speed / 10; // decrement 10 %
             self.just_eaten = false;
         } else {
             self.parts.pop_back().unwrap();
@@ -161,6 +161,7 @@ struct Game {
     cols: i32,
     snake: Snake,
     food: Food,
+    stop: bool,
 }
 
 impl Game {
@@ -171,12 +172,15 @@ impl Game {
         window.mvaddstr(1, 0, "Use wasd or hjkl to move.");
         window.mvaddstr(2, 0, "Press F1 to exit.");
         window.mvaddstr(3, 0, &format!("Score: {}", self.snake.score));
+        if self.stop {
+            window.mvaddstr(4, 0, "Game over!");
+        }
         self.food.render(window);
         self.snake.render(window);
     }
     fn input(&mut self, input: Input) {
         match Direction::input(input) {
-            Some(dir) => self.snake.set_direction(dir),
+            Some(dir) if !self.stop => self.snake.set_direction(dir),
             _ => (),
         }
     }
@@ -205,6 +209,8 @@ fn main() {
 
     mousemask(ALL_MOUSE_EVENTS, None);
 
+    set_title("Snake Game");
+
     window.keypad(true);
     window.clear();
 
@@ -226,6 +232,7 @@ fn main() {
             x: window.get_max_y() / 2 + 5,
             ch: '.',
         },
+        stop: false,
     };
 
     let mut quit = false;
@@ -234,14 +241,17 @@ fn main() {
         game.render(&window);
         window.refresh();
         // input
-        window.timeout(game.snake.speed);
+        match game.stop {
+            true => window.timeout(ERR),
+            false => window.timeout(game.snake.speed),
+        }
         match window.getch() {
             Some(Input::KeyF1) => quit = true,
             Some(input) => game.input(input),
             _ => (),
         }
         // update
-        if !game.update() { quit = true; }
+        if !game.update() { game.stop = true; }
     }
 
     curs_set(1);
