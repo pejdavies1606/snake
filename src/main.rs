@@ -135,6 +135,14 @@ impl Snake {
             _ => last_dir.clone(),
         };
     }
+    fn speed(&mut self) -> i32 {
+        match self.dir {
+            Direction::Left     => self.speed,
+            Direction::Down     => self.speed * 2,
+            Direction::Up       => self.speed * 2,
+            Direction::Right    => self.speed,
+        }
+    }
     fn is_collide(&self, y: i32, x: i32) -> bool {
         self.parts.iter().any(|p| y == p.0 && x == p.1)
     }
@@ -234,7 +242,7 @@ fn main() {
         game.render(&window);
         window.refresh();
         // input
-        window.timeout(game.snake.speed);
+        window.timeout(game.snake.speed());
         match window.getch() {
             Some(Input::KeyF1) => quit = true,
             Some(input) => game.input(input),
