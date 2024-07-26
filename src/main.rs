@@ -11,6 +11,7 @@ extern crate rand;
 
 use itertools::{Itertools, Position};
 use pancurses::*;
+use rand::distributions::Alphanumeric;
 use std::collections::LinkedList;
 
 struct Food {
@@ -33,13 +34,15 @@ impl Food {
         if eaten {
             use rand::Rng;
             use rand::thread_rng;
-            let mut rng = thread_rng();
             loop {
+                let mut rng = thread_rng();
                 let new_y = rng.gen_range(0..rows);
                 let new_x = rng.gen_range(0..cols);
+                let new_ch: String = rng.sample_iter(&Alphanumeric).take(1).map(char::from).collect();
                 if !snake.is_collide(new_y, new_x) {
                     self.y = new_y;
                     self.x = new_x;
+                    self.ch = new_ch.chars().next().unwrap();
                     break;
                 }
             }
