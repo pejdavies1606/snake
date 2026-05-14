@@ -254,7 +254,7 @@ fn main() {
         // input
         match game.stop {
             true => window.timeout(ERR),
-            false => window.timeout(game.snake.speed),
+            false => window.timeout(game.snake.speed()),
         }
         match window.getch() {
             Some(Input::KeyF1) => quit = true,
